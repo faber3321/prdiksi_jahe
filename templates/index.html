@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediksi Harga Jahe</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Prediksi Harga Jahe Berbasis Web</h1>
+            <p>Menggunakan RNN dengan Integrasi Data Cuaca</p>
+        </header>
+
+        <main>
+            <section class="prediction-section">
+                <h2>Prediksi Harga Jahe</h2>
+                <div class="controls">
+                    <label for="days">Jumlah hari untuk prediksi:</label>
+                    <input type="number" id="days" min="1" max="30" value="7">
+                    <button id="predict-btn">Prediksi</button>
+                </div>
+                
+                <div class="results">
+                    <div class="prediction-chart-container">
+                        <canvas id="predictionChart"></canvas>
+                    </div>
+                    
+                    <div class="prediction-data">
+                        <h3>Hasil Prediksi</h3>
+                        <div id="prediction-list"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="analytics-section">
+                <h2>Dashboard Analitik Interaktif</h2>
+                
+                <div class="analytics-grid">
+                    <div class="card">
+                        <h3>Harga Rata-rata</h3>
+                        <p id="avg-price">Rp 0</p>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>Harga Tertinggi</h3>
+                        <p id="max-price">Rp 0</p>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>Harga Terendah</h3>
+                        <p id="min-price">Rp 0</p>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>Tren Harga</h3>
+                        <p id="price-trend">-</p>
+                    </div>
+                </div>
+                
+                <div class="weather-section">
+                    <h3>Kondisi Cuaca Terkini</h3>
+                    <div id="weather-data">
+                        <p>Loading...</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
