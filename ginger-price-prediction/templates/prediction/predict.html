@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}Predict Ginger Price - Ginger Price Prediction{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="h3 mb-4">Ginger Price Prediction</h1>
+        <p class="text-muted">Predict future ginger prices using our advanced machine learning models</p>
+    </div>
+</div>
+
+{% if error %}
+<div class="alert alert-danger" role="alert">
+    {{ error }}
+</div>
+{% endif %}
+
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Prediction Parameters</h5>
+            </div>
+            <div class="card-body">
+                <form id="predictionForm" method="POST" action="{{ url_for('prediction.predict_price') }}">
+                    <div class="mb-3">
+                        <label for="days_ahead" class="form-label">Days Ahead to Predict</label>
+                        <input type="number" class="form-control" id="days_ahead" name="days_ahead" min="1" max="30" value="7" required>
+                        <div class="form-text">Enter number of days ahead to predict (1-30)</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="model_type" class="form-label">Prediction Model</label>
+                        <select class="form-select" id="model_type" name="model_type" required>
+                            <option value="lstm" selected>LSTM (Long Short-Term Memory)</option>
+                            <option value="rnn">RNN (Recurrent Neural Network)</option>
+                            <option value="gru">GRU (Gated Recurrent Unit)</option>
+                        </select>
+                        <div class="form-text">Select the ML model to use for prediction</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="current_price" class="form-label">Current Price (Rp/kg)</label>
+                        <input type="number" class="form-control" id="current_price" name="current_price" value="34500" readonly>
+                        <div class="form-text">Current market price of ginger</div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-ginger w-100" id="predictBtn">
+                        <i class="fas fa-calculator me-2"></i>Predict Price
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">How Our Prediction Works</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 text-center mb-3">
+                        <div class="bg-light p-3 rounded-circle mx-auto mb-2" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-database fa-2x text-ginger"></i>
+                        </div>
+                        <h6>Data Collection</h6>
+                        <p class="text-muted small">We collect historical price data, weather patterns, and market trends</p>
+                    </div>
+                    <div class="col-md-4 text-center mb-3">
+                        <div class="bg-light p-3 rounded-circle mx-auto mb-2" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-brain fa-2x text-ginger"></i>
+                        </div>
+                        <h6>Model Training</h6>
+                        <p class="text-muted small">Our ML models learn from historical patterns to predict future prices</p>
+                    </div>
+                    <div class="col-md-4 text-center mb-3">
+                        <div class="bg-light p-3 rounded-circle mx-auto mb-2" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-chart-line fa-2x text-ginger"></i>
+                        </div>
+                        <h6>Prediction</h6>
+                        <p class="text-muted small">The model predicts future prices with high accuracy</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Handle form submission with loading state
+    document.getElementById('predictionForm').addEventListener('submit', function(e) {
+        const submitBtn = document.getElementById('predictBtn');
+        const originalText = submitBtn.innerHTML;
+        
+        // Show loading state
+        submitBtn.innerHTML = '<span class="loading"></span> Predicting...';
+        submitBtn.disabled = true;
+        
+        // Allow form to submit normally
+        // In a real app, you might want to handle this with AJAX
+    });
+    
+    // Real-time validation
+    document.getElementById('days_ahead').addEventListener('change', function() {
+        const value = parseInt(this.value);
+        if (value < 1 || value > 30) {
+            this.classList.add('is-invalid');
+        } else {
+            this.classList.remove('is-invalid');
+        }
+    });
+</script>
+{% endblock %}

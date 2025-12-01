@@ -1,0 +1,332 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Ginger Price Prediction{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin: 1.5rem 0;
+    }
+    
+    .stat-card {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        transition: transform 0.3s ease;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+    
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1rem;
+    }
+    
+    .stat-value {
+        font-size: 2rem;
+        font-weight: bold;
+        color: var(--ginger-primary);
+        margin: 0.5rem 0;
+    }
+    
+    .stat-title {
+        color: var(--ginger-secondary);
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    .stat-change {
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+    }
+    
+    .positive {
+        color: #28a745;
+    }
+    
+    .negative {
+        color: #dc3545;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="h3 mb-4">Ginger Price Dashboard</h1>
+        <p class="text-muted">Monitor and predict ginger prices with our advanced ML models</p>
+    </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="dashboard-stats">
+    <div class="stat-card">
+        <div class="stat-icon bg-ginger-light">
+            <i class="fas fa-chart-line text-ginger"></i>
+        </div>
+        <div class="stat-title">Current Price</div>
+        <div class="stat-value">Rp 34,500</div>
+        <div class="stat-change positive">
+            <i class="fas fa-arrow-up"></i> 2.3% from last week
+        </div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-icon bg-ginger-light">
+            <i class="fas fa-bolt text-ginger"></i>
+        </div>
+        <div class="stat-title">Predicted Next Week</div>
+        <div class="stat-value">Rp 36,200</div>
+        <div class="stat-change positive">
+            <i class="fas fa-arrow-up"></i> 4.8% increase
+        </div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-icon bg-ginger-light">
+            <i class="fas fa-temperature-high text-ginger"></i>
+        </div>
+        <div class="stat-title">Avg. Temperature</div>
+        <div class="stat-value">28°C</div>
+        <div class="stat-change">
+            Stable conditions
+        </div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-icon bg-ginger-light">
+            <i class="fas fa-rainbow text-ginger"></i>
+        </div>
+        <div class="stat-title">Rainfall</div>
+        <div class="stat-value">45mm</div>
+        <div class="stat-change negative">
+            <i class="fas fa-arrow-up"></i> Above average
+        </div>
+    </div>
+</div>
+
+<!-- Charts Section -->
+<div class="row mt-4">
+    <div class="col-lg-8">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Ginger Price Trend</h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="priceChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Price Prediction</h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="predictionChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Quick Actions</h5>
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <a href="{{ url_for('prediction.predict_price') }}" class="btn btn-ginger w-100">
+                            <i class="fas fa-calculator me-2"></i>Predict Price
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{{ url_for('analysis.correlation') }}" class="btn btn-outline-ginger w-100">
+                            <i class="fas fa-chart-pie me-2"></i>View Analysis
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{{ url_for('weather.current_weather') }}" class="btn btn-outline-ginger w-100">
+                            <i class="fas fa-cloud-sun me-2"></i>Weather Data
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{{ url_for('prediction.history') }}" class="btn btn-outline-ginger w-100">
+                            <i class="fas fa-history me-2"></i>Prediction History
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Predictions -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Recent Predictions</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Model Used</th>
+                                <th>Predicted Price</th>
+                                <th>Actual Price</th>
+                                <th>Accuracy</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Dec 1, 2025</td>
+                                <td>LSTM</td>
+                                <td>Rp 34,200</td>
+                                <td>Rp 34,500</td>
+                                <td class="text-success">98.7%</td>
+                                <td><span class="badge bg-success">Accurate</span></td>
+                            </tr>
+                            <tr>
+                                <td>Nov 30, 2025</td>
+                                <td>RNN</td>
+                                <td>Rp 33,800</td>
+                                <td>Rp 34,100</td>
+                                <td class="text-success">98.1%</td>
+                                <td><span class="badge bg-success">Accurate</span></td>
+                            </tr>
+                            <tr>
+                                <td>Nov 29, 2025</td>
+                                <td>GRU</td>
+                                <td>Rp 34,600</td>
+                                <td>Rp 34,300</td>
+                                <td class="text-warning">97.8%</td>
+                                <td><span class="badge bg-warning">Moderate</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Initialize charts when the page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize sample charts with mock data
+        if (typeof Chart !== 'undefined') {
+            // Price trend chart
+            const priceCtx = document.getElementById('priceChart').getContext('2d');
+            new Chart(priceCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    datasets: [{
+                        label: 'Ginger Price (Rp/kg)',
+                        data: [18000, 19500, 21000, 22500, 24000, 25500, 27000, 28500, 30000, 31500, 33000, 34500],
+                        borderColor: '#d2691e',
+                        backgroundColor: 'rgba(210, 105, 30, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Ginger Price Trend (Last 12 Months)'
+                        },
+                        legend: {
+                            display: true,
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            title: {
+                                display: true,
+                                text: 'Price (Rp/kg)'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Prediction chart
+            const predictionCtx = document.getElementById('predictionChart').getContext('2d');
+            new Chart(predictionCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Today', 'Tomorrow', '+2 Days', '+3 Days', '+4 Days', '+5 Days'],
+                    datasets: [{
+                        label: 'Predicted Price (Rp/kg)',
+                        data: [34500, 35200, 35800, 36500, 37200, 37900],
+                        borderColor: '#cd853f',
+                        backgroundColor: 'rgba(205, 133, 63, 0.2)',
+                        tension: 0.4,
+                        fill: true
+                    }, {
+                        label: 'Actual Price (Rp/kg)',
+                        data: [34500, null, null, null, null, null],
+                        borderColor: '#d2691e',
+                        backgroundColor: 'rgba(210, 105, 30, 0.2)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Price Prediction (Next 5 Days)'
+                        },
+                        legend: {
+                            display: true,
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            title: {
+                                display: true,
+                                text: 'Price (Rp/kg)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}
