@@ -1,0 +1,203 @@
+/* Ginger Theme Colors */
+:root {
+    --ginger-primary: #d2691e;      /* Ginger color */
+    --ginger-secondary: #cd853f;    /* Darker ginger */
+    --ginger-light: #f5deb3;        /* Wheat color (light ginger tone) */
+    --ginger-dark: #8b4513;         /* Saddle brown (dark ginger) */
+    --ginger-accent: #daa520;       /* Goldenrod (accent color) */
+}
+
+/* Base styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #fffaf0; /* Floral white background */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Ginger theme for navbar */
+.navbar.bg-ginger {
+    background: linear-gradient(135deg, var(--ginger-primary), var(--ginger-secondary)) !important;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* Footer with ginger theme */
+.footer.bg-ginger {
+    background: linear-gradient(135deg, var(--ginger-dark), var(--ginger-primary)) !important;
+    margin-top: auto;
+}
+
+/* Card styling with ginger theme */
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card-header {
+    background: linear-gradient(135deg, var(--ginger-primary), var(--ginger-secondary));
+    color: white;
+    border-radius: 10px 10px 0 0 !important;
+    font-weight: 600;
+}
+
+/* Buttons with ginger theme */
+.btn-ginger {
+    background-color: var(--ginger-primary);
+    border-color: var(--ginger-primary);
+    color: white;
+}
+
+.btn-ginger:hover {
+    background-color: var(--ginger-secondary);
+    border-color: var(--ginger-secondary);
+    color: white;
+}
+
+.btn-outline-ginger {
+    color: var(--ginger-primary);
+    border-color: var(--ginger-primary);
+}
+
+.btn-outline-ginger:hover {
+    background-color: var(--ginger-primary);
+    border-color: var(--ginger-primary);
+    color: white;
+}
+
+/* Chart containers */
+.chart-container {
+    position: relative;
+    height: 400px;
+    margin: 20px 0;
+}
+
+/* Dashboard cards */
+.dashboard-card {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.dashboard-card:hover {
+    box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+}
+
+/* Ginger themed statistics */
+.stat-card {
+    background: linear-gradient(135deg, #f9f3eb, #f0e6d2);
+    border-left: 4px solid var(--ginger-primary);
+}
+
+.stat-card .stat-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--ginger-dark);
+}
+
+.stat-card .stat-title {
+    color: var(--ginger-secondary);
+    font-weight: 500;
+}
+
+/* Form styling */
+.form-control {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.form-control:focus {
+    border-color: var(--ginger-primary);
+    box-shadow: 0 0 0 0.2rem rgba(210, 105, 30, 0.25);
+}
+
+/* Table styling */
+.table {
+    background-color: white;
+}
+
+.table th {
+    background-color: var(--ginger-primary);
+    color: white;
+}
+
+/* Alert styling */
+.alert {
+    border-radius: 5px;
+}
+
+/* Prediction results */
+.prediction-result {
+    background: linear-gradient(135deg, #fffaf0, #f5f5dc);
+    border: 1px solid var(--ginger-light);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+}
+
+.prediction-value {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--ginger-primary);
+    margin: 10px 0;
+}
+
+.prediction-date {
+    color: var(--ginger-secondary);
+    font-style: italic;
+}
+
+/* Footer links */
+.footer a:hover {
+    text-decoration: underline;
+    color: var(--ginger-accent) !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .chart-container {
+        height: 300px;
+    }
+    
+    .prediction-value {
+        font-size: 2rem;
+    }
+}
+
+/* Animation for loading */
+.loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(210, 105, 30, 0.3);
+    border-radius: 50%;
+    border-top-color: var(--ginger-primary);
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Background pattern */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d2691e' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    z-index: -1;
+    pointer-events: none;
+}

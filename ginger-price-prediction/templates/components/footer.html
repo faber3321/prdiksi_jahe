@@ -1,0 +1,28 @@
+<footer class="footer bg-ginger text-white mt-5 py-4">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-4">
+                <h5>Ginger Price Prediction</h5>
+                <p>Helping farmers and traders make informed decisions about ginger prices using advanced ML models.</p>
+            </div>
+            <div class="col-md-4">
+                <h5>Quick Links</h5>
+                <ul class="list-unstyled">
+                    <li><a href="{{ url_for('index') }}" class="text-white">Dashboard</a></li>
+                    <li><a href="{{ url_for('prediction.predict_price') }}" class="text-white">Price Prediction</a></li>
+                    <li><a href="{{ url_for('analysis.correlation') }}" class="text-white">Analysis</a></li>
+                    <li><a href="{{ url_for('weather.current_weather') }}" class="text-white">Weather Data</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <h5>Contact Us</h5>
+                <p>Email: info@gingerprediction.com</p>
+                <p>Phone: +62 123 4567 890</p>
+            </div>
+        </div>
+        <hr class="my-3">
+        <div class="text-center">
+            <p>&copy; 2025 Ginger Price Prediction. All rights reserved.</p>
+        </div>
+    </div>
+</footer>

@@ -1,0 +1,230 @@
+{% extends "base.html" %}
+
+{% block title %}Prediction Results - Ginger Price Prediction{% endblock %}
+
+{% block extra_css %}
+<style>
+    .prediction-card {
+        background: linear-gradient(135deg, #fffaf0, #f5f5dc);
+        border: 1px solid var(--ginger-light);
+        border-radius: 10px;
+        padding: 20px;
+        margin: 20px 0;
+        text-align: center;
+    }
+    
+    .prediction-value {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: var(--ginger-primary);
+        margin: 10px 0;
+    }
+    
+    .prediction-date {
+        color: var(--ginger-secondary);
+        font-style: italic;
+        margin-bottom: 15px;
+    }
+    
+    .prediction-model {
+        background-color: var(--ginger-primary);
+        color: white;
+        padding: 3px 10px;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        display: inline-block;
+    }
+    
+    .accuracy-badge {
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="h3 mb-4">Prediction Results</h1>
+        <p class="text-muted">Based on your parameters, here are the predicted ginger prices</p>
+    </div>
+</div>
+
+<!-- Prediction Summary -->
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0">Prediction Summary</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <p><strong>Model Used:</strong> <span class="prediction-model">{{ prediction.model_used }}</span></p>
+                <p><strong>Days Predicted:</strong> {{ days_ahead }}</p>
+                <p><strong>Current Price:</strong> {{ "{:,.0f}".format(prediction.current_price) }} Rp/kg</p>
+            </div>
+            <div class="col-md-6">
+                <p><strong>Model Accuracy:</strong> 
+                    <span class="accuracy-badge text-success">{{ "{:.1f}".format(prediction.accuracy) }}%</span>
+                </p>
+                <p><strong>Prediction Date:</strong> {{ prediction.predictions[0].date }}</p>
+                <p><strong>Next Predicted Price:</strong> 
+                    <span class="prediction-value">{{ "{:,.0f}".format(prediction.predictions[0].predicted_price) }} Rp/kg</span>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Prediction Details -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Detailed Predictions</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Day</th>
+                                <th>Predicted Price (Rp/kg)</th>
+                                <th>Difference from Current</th>
+                                <th>Change %</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for pred in prediction.predictions %}
+                            <tr>
+                                <td>{{ pred.date }}</td>
+                                <td>Day {{ loop.index }}</td>
+                                <td class="prediction-value">{{ "{:,.0f}".format(pred.predicted_price) }}</td>
+                                <td>
+                                    {% set diff = pred.predicted_price - prediction.current_price %}
+                                    {% if diff >= 0 %}
+                                        <span class="text-success">+{{ "{:,.0f}".format(diff) }}</span>
+                                    {% else %}
+                                        <span class="text-danger">{{ "{:,.0f}".format(diff) }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% set percent_change = ((pred.predicted_price - prediction.current_price) / prediction.current_price) * 100 %}
+                                    {% if percent_change >= 0 %}
+                                        <span class="text-success">+{{ "{:.2f}".format(percent_change) }}%</span>
+                                    {% else %}
+                                        <span class="text-danger">{{ "{:.2f}".format(percent_change) }}%</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart Visualization -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Price Prediction Chart</h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="predictionChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Action Buttons -->
+<div class="row mt-4">
+    <div class="col-12 text-center">
+        <a href="{{ url_for('prediction.predict_price') }}" class="btn btn-outline-ginger me-2">
+            <i class="fas fa-redo me-2"></i>Make Another Prediction
+        </a>
+        <a href="{{ url_for('prediction.history') }}" class="btn btn-ginger">
+            <i class="fas fa-history me-2"></i>View History
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Initialize the prediction chart
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof Chart !== 'undefined') {
+            const ctx = document.getElementById('predictionChart').getContext('2d');
+            
+            // Extract data from the template context
+            const labels = [
+                {% for pred in prediction.predictions %}
+                    '{{ pred.date }}'{% if not loop.last %}, {% endif %}
+                {% endfor %}
+            ];
+            
+            const data = [
+                {% for pred in prediction.predictions %}
+                    {{ pred.predicted_price }}{% if not loop.last %}, {% endif %}
+                {% endfor %}
+            ];
+            
+            // Include current price at the beginning
+            const allLabels = ['Current'].concat(labels);
+            const allData = [{{ prediction.current_price }}].concat(data);
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: allLabels,
+                    datasets: [{
+                        label: 'Predicted Ginger Price (Rp/kg)',
+                        data: allData,
+                        borderColor: '#d2691e',
+                        backgroundColor: 'rgba(210, 105, 30, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        pointRadius: 5,
+                        pointBackgroundColor: '#d2691e',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Ginger Price Prediction Trend'
+                        },
+                        legend: {
+                            display: true,
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            title: {
+                                display: true,
+                                text: 'Price (Rp/kg)'
+                            }
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index',
+                    }
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}
